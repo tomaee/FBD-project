@@ -16,7 +16,7 @@ class Database:
                                   port = "5432")
       self.cur = self.conn.cursor()
 
-
+      print(f'Successfully connected to database')
       
     except Exception as error:
       print(error)
@@ -27,7 +27,7 @@ class Database:
     if self.conn is not None:
         self.conn.close()
 
-  def modifyDatabase(self, query, specs):
+  def specificModifyDatabase(self, query, specs):
     try:
       self.cur.execute(query, specs)
 
@@ -35,13 +35,39 @@ class Database:
     except Exception as error:
       print(error)
 
+  def genericModifyDatabase(self, query):
+    try:
+      self.cur.execute(query)
 
-  def browseDatabase(self, query, specs):
+      self.conn.commit()
+    except Exception as error:
+      print(error)
+
+
+  def specificBrowseDatabase(self, query, specs):
     try:  
       self.cur.execute(query % specs)
       print(self.cur.fetchall())
     except Exception as error:
       print(error)
+
+  
+  def genericBrowseDatabase(self, query):
+    try:  
+      self.cur.execute(query)
+      print(self.cur.fetchall())
+    except Exception as error:
+      print(error)
+
+
+  def callAddConta(self,newCpf, newLocal, newPlan):
+    self.cur.execute("CALL addConta(%s, %s, %s)", (newCpf, newLocal, newPlan))
+    self.conn.commit()
+    
+  def callChangePlan(self,newCpf, newPlan):
+    self.cur.execute("CALL changePlan(%s, %s)", (newCpf, newPlan))
+    self.conn.commit()
+    
 
 
 
